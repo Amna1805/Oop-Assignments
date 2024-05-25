@@ -1,0 +1,369 @@
+#include<iostream>
+#include<cstring>
+using namespace std;
+class Array
+{
+	const int size;
+	int *ptr;
+	static double global_sum;
+	double local_average;
+	int static global_count;
+	int static global_size;
+	double static global_average;
+	public:
+	friend istream & operator >> (istream& in, Array& a)
+	{
+		for(int i=0;i<a.get_size();i++)
+			{
+				cout<<"Enter "<<i+1<<" "<<" Element:";
+			    in>>a.ptr[i];
+			    global_size++;
+			}
+		return in;
+    }
+    double get_local_Average();
+    friend ostream & operator << (ostream & os,const Array & b){
+    	
+    	cout<<"Array:";
+		for(int i=0;i<b.size;i++)
+			{
+			    os<<b.ptr[i]<<" ";
+			}
+		return os;
+    }
+    bool operator==(const Array &c);
+    int &operator[](int);
+    Array operator +(const 	Array & rhs);
+    Array operator -(const 	Array & rhs);
+    Array &operator()(int,int);
+    Array &operator++();
+    Array &operator--();
+    Array();
+	Array(int s);
+    static int get_global_count(); 
+    int get_size();
+    ~Array();
+     static int get_global_size();
+     static double get_global_average();
+     static double get_global_sum();
+     Array(int i,int*ptr);
+    
+};
+Array &Array::operator--()
+{
+	for(int i=0;i<size;i++)
+	{
+		ptr[i]=ptr[i]-1;
+	}
+	return *this;
+}
+Array &Array::operator++()
+{
+	for(int i=0;i<size;i++)
+	{
+		ptr[i]=ptr[i]+1;
+	}
+	return *this;
+}
+Array Array::operator -(const 	Array & rhs)
+{
+	Array a(size);
+	
+		a.ptr=new int[size];
+		for(int i=0;i<size;i++)
+		{
+			a.ptr[i]=ptr[i]-rhs.ptr[i];
+		}
+	return a;
+}
+Array Array::operator +(const 	Array & rhs)
+{
+     	Array a(size);
+		a.ptr=new int[size];
+		for(int i=0;i<size;i++)
+		{
+			a.ptr[i]=ptr[i]+rhs.ptr[i];
+		
+		}
+	return a;
+}
+bool Array::operator==(const Array &c)
+{
+	if(size==c.size) 
+	{
+		return true;	
+	}
+	else
+	
+	{
+		return false;
+	}
+		
+
+}
+Array::Array(int i,int*ptr1):size(i)
+{
+	ptr=new int[size];
+	for(int j=0;j<size;j++)
+	{
+			ptr[j]=ptr1[j];
+	}
+}
+Array & Array::operator()(int index,int sublength)
+{
+	int *ptr1=new int[sublength+1];
+	
+		for(int i=0;i<sublength;i++)
+		{
+			ptr1[i]=ptr[i+index-1];
+		}
+	
+		Array *A1=new Array(sublength,ptr1);
+		delete []ptr1;
+		return *A1;
+}
+int & Array:: operator[](int pos)
+{
+		return ptr[pos-1];
+}
+double Array::get_global_sum()
+{
+	return global_sum;
+}
+double Array::global_sum=0;
+double Array::get_global_average()
+{
+	global_average=global_sum/global_size;
+	return global_average;
+}
+double Array::global_average=0;
+int Array::get_global_size()
+{
+	return global_size;
+}
+int Array::global_size=0.0;
+int Array::get_global_count()
+{
+	return global_count;
+}
+int Array::global_count=0;
+double Array::get_local_Average()
+{
+	int i;
+	float sum=0.0;
+	for(i=0;i<size;i++)
+	{
+	   sum=sum+ptr[i];	
+	}
+	local_average=sum/get_size();
+	global_sum=global_sum+sum;
+	return local_average;
+}
+Array::~Array()
+{
+	if(ptr)
+	{
+    
+     	delete []ptr;
+	 
+	}
+	cout<<"Destructors called."<<endl;
+}
+Array::Array():size(0)
+{
+	global_count++;
+}
+int Array::get_size()
+{
+	return size;
+}
+Array::Array(int ss):size(ss)
+{
+ptr=new int[size];
+global_count++;  
+}
+
+int main()
+{
+	int Size;
+	int pos;
+	int index;
+	int sublength;
+	int i;
+	int ins;
+	cout<<"Enter no.of instances:";
+	cin>>ins;
+	bool b1;
+	cout<<"Enter size of an array:";
+	cin>>Size;
+	if(Size>=0)
+	{
+	    Size=Size;
+	}	
+	else
+	{
+		Size=1;
+	}
+	    Array a1(Size);
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Size of an array:"<<a1.get_size()<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cin>>a1;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<a1;
+	    cout<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                :Operators Overloaded:                         "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Index and sublength for Elements in that range:"<<endl;
+	    cout<<"Enter Index:";
+	    cin>>index;
+	    cout<<"Enter Sublength:";
+	    cin>>sublength;
+	    if(index>0&&index+sublength-1<=a1.get_size())
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	        cout<<a1(index,sublength)<<endl;
+	        cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+	    else
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	        cout<<"Invalid Inputs."<<endl;
+	         cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+	    cout<<"Enter Element# to be found:";
+	    cin>>pos;
+	    cout<<pos<<" Element of array is:"<<a1[pos]<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Enter Element# of an array to get from user:";
+	    cin>>pos;
+	    if(pos>0&&pos<=a1.get_size())
+	    {
+	    	cout<<"Enter Element "<<pos<<" of array:"<<endl;
+	        cin>>a1[pos];
+		}
+		else
+		{
+			cout<<"Invalid Position."<<endl;
+		}
+	    
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                     "<<a1<<"                                  "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                 :Static Data Members:                         "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<endl;
+	    cout<<"Local Average is:"<<a1.get_local_Average()<<endl;
+	    cout<<"Global_Count:"<<Array::get_global_count()<<endl;
+	    cout<<"Global Sum:"<<Array::get_global_sum()<<endl;
+	    cout<<"Global_Average:"<<Array::get_global_average()<<endl;
+	    cout<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Enter size of next array:";
+	    cin>>Size;
+	    if(Size>=0)
+	{
+	    Size=Size;
+	}	
+	else
+	{
+		Size=1;
+	}
+	    Array a2(Size);
+	    cout<<endl<<endl;
+	    cout<<"Size of an array:"<<a2.get_size()<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cin>>a2;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<a2<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                :Operators Overloaded:                         "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Index and sublength for Elements in that range:"<<endl;
+	    cout<<"Index and sublength for Elements in that range:"<<endl;
+	    cout<<"Enter Index:";
+	    cin>>index;
+	    cout<<"Enter Sublength:";
+	    cin>>sublength;
+	    if(index>0&&index+sublength-1<=a2.get_size())
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	        cout<<a2(index,sublength)<<endl;
+	        cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+	    else
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	        cout<<"Invalid Inputs."<<endl;
+	         cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+	    
+	    cout<<"Enter Element# to be found:";
+	    cin>>pos;
+	    cout<<pos<<" Element of array is:"<<a2[pos]<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Enter Element# of an array to get from user:";
+	    cin>>pos;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	     if(pos>0&&pos<=a2.get_size())
+	    {
+	    	cout<<"Enter Element "<<pos<<" of array:"<<endl;
+	        cin>>a2[pos];
+		}
+		else
+		{
+			cout<<"Invalid Position."<<endl;
+		}
+	   cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                   "<<a2<<"                                   "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<endl<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"                                 Static Data Members:                          "<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    cout<<"Local Average is:"<<a2.get_local_Average()<<endl;
+	    cout<<"Global_Count:"<<Array::get_global_count()<<endl;
+	    cout<<"Global Sum:"<<Array::get_global_sum()<<endl;
+	    cout<<"Global_Average:"<<Array::get_global_average()<<endl;
+	    cout<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+	    b1=a1==a2;
+	    cout<<"                                :Addition/Subtraction:                         "<<endl;
+	    if(b1==true)
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	    	cout<<"Addition of "<<a1<<" and "<<a2<<" is"<<endl;
+	        cout<<"-------------------------------------------------------------------------------"<<endl;
+	        cout<<"                                     "<<a1+a2<<"                                  "<<endl;
+	        cout<<"Global_Count:"<<Array::get_global_count()<<endl;
+	       cout<<"-------------------------------------------------------------------------------"<<endl;
+	       cout<<"Subtraction of "<<a1<<" and"<<a2<<" is"<<endl;
+	      cout<<"-------------------------------------------------------------------------------"<<endl;
+	       cout<<"                                   "<<a1-a2<<"                                   "<<endl;
+	       cout<<"Global_Count:"<<Array::get_global_count()<<endl;
+	       cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+	    else
+	    {
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+	    	cout<<"Addition and Subtraction not possible as sizes of arrays not matched."<<endl;
+	    	cout<<"-------------------------------------------------------------------------------"<<endl;
+		}
+		cout<<endl;
+		cout<<endl;
+		cout<<"-------------------------------------------------------------------------------"<<endl;
+		cout<<"                                Increment/Decrement                            "<<endl;
+		cout<<"-------------------------------------------------------------------------------"<<endl;
+		cout<<"Increment in "<<a1<<" by 1 is: ";
+		cout<<++a1<<endl;
+		cout<<a1<<endl;
+	    cout<<"-------------------------------------------------------------------------------"<<endl;
+		cout<<"-------------------------------------------------------------------------------"<<endl;
+		cout<<"Decrement in "<<a2<<" by 1 is: ";
+		cout<<--a2<<endl;
+		cout<<a2<<endl;
+		cout<<"-------------------------------------------------------------------------------"<<endl;
+return 0;	
+}
